@@ -205,13 +205,15 @@ Example n8n HTTP requests
 **n8n Nodes**
 
 - A publishable n8n community package is included at `n8n-nodes-8thwall/`.
-- It adds a single flexible node “8th Wall MCP Tool” which calls the HTTP bridge tools.
+- It adds:
+  - A flexible node “8th Wall MCP Tool” which calls the HTTP bridge tools.
+  - A Router node that turns free‑text requests into tool + args items you can feed into the MCP node via expressions.
 - Quick use:
   - Build and run the HTTP bridge here (see above).
   - Build the package: `cd n8n-nodes-8thwall && npm install && npm run build`.
   - In n8n, enable Community Nodes and install from this folder (or from npm if published as `n8n-nodes-8thwall`).
   - Create credentials “8th Wall MCP Bridge API” with Base URL `http://127.0.0.1:8787`.
-  - Add the node and choose a tool; pass Args (JSON) as shown in HTTP examples.
+  - Add the MCP node and choose a tool; or use the Router → MCP pattern by setting Tool Name (Custom) = `{{$json.tool}}` and Args (JSON) = `{{$json.args}}`.
 
 Notes
 

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.1 — 2025-09-27
+
+Router node added.
+
+- New node: “8th Wall MCP Router” that maps free‑text requests into tool + args items (e.g., scaffold, start dev server, download/add model, set background color, add primitives/lights, environment HDR, OrbitControls/Grid/Floor).
+- MCP node: works with Router via expressions (`{{$json.tool}}`, `{{$json.args}}`).
+
 ## 1.0.0 — 2025-09-27
 
 Initial stable release of n8n-nodes-8thwall.

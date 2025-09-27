@@ -5,6 +5,7 @@ Custom n8n nodes to call the 8th Wall MCP HTTP bridge (from this repo).
 Overview
 
 - One flexible node: invoke any MCP tool exposed by the HTTP bridge
+- Router node: converts free-text requests to tool + args items
 - Dynamic tool list loaded from `/tools`
 - Simple credential: base URL of the bridge (default `http://127.0.0.1:8787`)
 
@@ -32,9 +33,17 @@ Usage
     - `scene_add_gltf_model`: `{ "src": "assets/models/MyModel.glb", "position": [0,1.2,-2], "scale": [0.5,0.5,0.5] }`
     - `devserver_start`: `{ "port": 5173 }`
 
+- Or use the Router node to drive the MCP node dynamically:
+  - Add node: 8th Wall MCP Router
+  - Set Request to something like: "Scaffold an A‑Frame project and start the dev server on 5173"
+  - Connect Router → 8th Wall MCP
+  - In the MCP node, enable "Use Custom Tool Name"
+    - Tool Name (Custom): expression `{{$json.tool}}`
+    - Args (JSON): expression `{{$json.args}}`
+  - The Router can emit multiple items (e.g., download then add model) — the MCP node will execute each in order.
+
 Notes
 
 - The node simply POSTs to `/tool/<name>` with the JSON body you provide.
 - Response shape mirrors the bridge: `{ ok, tool, result }`. The node outputs `result` (or the full body on error).
 - To point at an 8th Wall Desktop project, set `PROJECT_ROOT` when starting the bridge, or use the desktop tools.
-

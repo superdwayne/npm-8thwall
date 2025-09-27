@@ -21,5 +21,5 @@ async function copyIfExists(rel){
 (async () => {
   // Known assets
   await copyIfExists('nodes/EighthWall/wall.svg');
+  await copyIfExists('nodes/EighthWallRouter/wall.svg');
 })().catch((e) => { console.error(e); process.exit(1); });
-

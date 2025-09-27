@@ -3,6 +3,7 @@
   "compilerOptions": {
     "target": "ES2019",
     "module": "CommonJS",
+    "moduleResolution": "Node",
     "lib": ["ES2020"],
     "declaration": false,
     "sourceMap": false,
@@ -14,4 +15,3 @@
   },
   "include": ["src/**/*.ts"]
 }
-

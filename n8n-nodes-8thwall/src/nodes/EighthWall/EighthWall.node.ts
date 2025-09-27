@@ -3,7 +3,7 @@
   Invokes tools exposed by the MCP HTTP bridge.
 */
 
-import type { IExecuteFunctions, INodeExecutionData, INodeType, INodeTypeDescription, ILoadOptionsFunctions, INodeListSearchResult } from 'n8n-workflow';
+import type { IExecuteFunctions, INodeExecutionData, INodeType, INodeTypeDescription, ILoadOptionsFunctions, INodePropertyOptions } from 'n8n-workflow';
 
 export class EighthWall implements INodeType {
   description: INodeTypeDescription = {
@@ -34,6 +34,22 @@ export class EighthWall implements INodeType {
         description: 'Tool name to invoke',
       },
       {
+        displayName: 'Use Custom Tool Name',
+        name: 'useCustomTool',
+        type: 'boolean',
+        default: false,
+        description: 'Enable to type a tool name manually',
+      },
+      {
+        displayName: 'Tool Name (Custom)',
+        name: 'toolCustom',
+        type: 'string',
+        default: '',
+        placeholder: 'scene_add_gltf_model',
+        description: 'Tool name as exposed by the bridge (see /tools)',
+        displayOptions: { show: { useCustomTool: [true] } },
+      },
+      {
         displayName: 'JSON Parameters',
         name: 'jsonParameters',
         type: 'boolean',
@@ -54,7 +70,7 @@ export class EighthWall implements INodeType {
 
   methods = {
     loadOptions: {
-      async getTools(this: ILoadOptionsFunctions): Promise<INodeListSearchResult> {
+      async getTools(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
         const creds = await this.getCredentials('eightWallBridgeApi');
         const baseUrl = String((creds as any).baseUrl || 'http://127.0.0.1:8787').replace(/\/$/, '');
         try {
@@ -63,11 +79,12 @@ export class EighthWall implements INodeType {
             url: `${baseUrl}/tools`,
             json: true,
           });
-          const options = (list.tools || []).map((t: any) => ({ name: `${t.name}`, value: t.name, description: t.description }));
-          return { results: options } as any;
+          const options: INodePropertyOptions[] = (list.tools || []).map((t: any) => ({ name: `${t.name}`, value: t.name, description: t.description }));
+          return options;
         } catch (e) {
           // Fallback to minimal set
-          return { results: [ { name: 'health_ping', value: 'health_ping' } ] } as any;
+          const fallback: INodePropertyOptions[] = [ { name: 'health_ping', value: 'health_ping' } ];
+          return fallback;
         }
       },
     },
@@ -80,7 +97,10 @@ export class EighthWall implements INodeType {
     const baseUrl = String((credentials as any).baseUrl || 'http://127.0.0.1:8787').replace(/\/$/, '');
 
     for (let i = 0; i < items.length; i++) {
-      const tool = this.getNodeParameter('tool', i) as string;
+      const useCustom = this.getNodeParameter('useCustomTool', i) as boolean;
+      const tool = useCustom
+        ? (this.getNodeParameter('toolCustom', i) as string)
+        : (this.getNodeParameter('tool', i) as string);
       const jsonParameters = this.getNodeParameter('jsonParameters', i) as boolean;
       const args = jsonParameters ? (this.getNodeParameter('argsJson', i) as object) : {};
 
